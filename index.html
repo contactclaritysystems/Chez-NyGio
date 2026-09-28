@@ -464,6 +464,10 @@ ILL.oasis=CAN('#FFC23C','<circle cx="56" cy="66" r="12" fill="#FF8C1A"/><circle 
 const SIROP=c=>'<line x1="55" y1="56" x2="71" y2="10" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/><line x1="55" y1="56" x2="71" y2="10" stroke="#3A86FF" stroke-width="6" stroke-linecap="round" stroke-dasharray="4 6"/>'+GLASS(c,ICE(48,60,15)+ICE(62,76,-10));
 ILL.sirop_g=SIROP('#D7263D');ILL.sirop_m=SIROP('#3CC47C');ILL.sirop_f=SIROP('#FF5C8A');ILL.sirop_c=SIROP('#F7E35A');
 ILL.addition='<path d="M32,12 h56 v92 l-7,-6 -7,6 -7,-6 -7,6 -7,-6 -7,6 -7,-6 -7,6z" fill="#FFFFFF" stroke="#E4D6C3" stroke-width="2.5"/><g stroke="#D5C3B0" stroke-width="4" stroke-linecap="round"><path d="M42,30 h36M42,42 h28M42,54 h32M42,66 h24"/></g><path d="M42,80 h36" stroke="#3B1F12" stroke-width="5" stroke-linecap="round"/><circle cx="90" cy="92" r="20" fill="#E9BD4C" stroke="#C99A2A" stroke-width="3"/><text x="90" y="100" text-anchor="middle" font-family="Fredoka,Trebuchet MS,sans-serif" font-weight="700" font-size="22" fill="#6B4A10">€</text>';
+ILL.martini='<path d="M22,26 h76 l-38,40z" fill="#EAF6FF" stroke="#CFE3F2" stroke-width="2"/><path d="M31,35 h58 l-29,30z" fill="#B8432F"/><line x1="72" y1="14" x2="50" y2="48" stroke="#8A5A2B" stroke-width="3" stroke-linecap="round"/><circle cx="56" cy="40" r="7" fill="#7BA23F"/><circle cx="55" cy="40" r="2.5" fill="#E63B2E"/><rect x="57" y="64" width="6" height="34" fill="#EAF6FF" stroke="#CFE3F2" stroke-width="1.5"/><ellipse cx="60" cy="102" rx="24" ry="6" fill="#EAF6FF" stroke="#CFE3F2" stroke-width="2"/><path d="M34,32 l12,12" stroke="#fff" stroke-width="3" opacity=".7" stroke-linecap="round"/>';
+const TUMB=(liq,extra)=>'<path d="M26,42 h68 l-6,64 q-28,6 -56,0z" fill="#EAF6FF" stroke="#CFE3F2" stroke-width="2"/><path d="M28.5,62 h63 l-4,44 q-27.5,6 -55,0z" fill="'+liq+'"/>'+ICE(38,54,15).replace('opacity=".75"','opacity=".9"')+ICE(60,60,-12).replace('opacity=".75"','opacity=".9"')+'<rect x="34" y="70" width="5" height="30" rx="2.5" fill="#fff" opacity=".45"/>'+(extra||'');
+ILL.suze=TUMB('#F2D22E','<path d="M72,40 q12,-18 26,-12 q-6,6 -20,10z" fill="#F7B500"/>');
+ILL.rhum=TUMB('#A0521C')+SLICE(88,42,'#4CAF50','#C5E86C');
 ILL.whisky='<path d="M24,46 h72 l-6,60 q-30,6 -60,0z" '+GLASSW+'/><path d="M27,68 h66 l-3.6,38 q-29.4,6 -58.8,0z" fill="#C8752A"/>'+ICE(38,58,15).replace('opacity=".75"','opacity=".9"')+ICE(58,62,-12).replace('opacity=".75"','opacity=".9"')+ICE(72,56,20).replace('opacity=".75"','opacity=".9"');
 ILL.planche=`<rect x="98" y="66" width="18" height="12" rx="6" fill="#B9773A"/><rect x="6" y="46" width="96" height="56" rx="14" fill="#B9773A"/><rect x="10" y="50" width="88" height="48" rx="11" fill="#D39456"/>${[[28,66],[44,62],[36,80]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="10" fill="#A8323A"/><circle cx="${x-3}" cy="${y-2}" r="1.6" fill="#fff"/><circle cx="${x+3}" cy="${y+3}" r="1.6" fill="#fff"/><circle cx="${x+2}" cy="${y-4}" r="1.3" fill="#fff"/>`).join('')}${[[62,62],[72,58],[68,72],[58,76]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="6" ry="5" fill="#6B8E23"/><ellipse cx="${x-2}" cy="${y-2}" rx="2" ry="1.5" fill="#A6C85A"/>`).join('')}${[[84,68,-10],[86,82,15],[76,88,-25]].map(([x,y,r])=>`<ellipse cx="${x}" cy="${y}" rx="10" ry="7" fill="#FFD25A" transform="rotate(${r} ${x} ${y})"/>`).join('')}`;
 ILL.f_ptitchef='<rect x="6" y="74" width="108" height="34" rx="10" fill="#E63B2E"/><rect x="6" y="74" width="108" height="6" rx="3" fill="#C92E22"/>'+T(62,-2,.5,ILL.jus)+T(-2,30,.64,ILL.hotdog)+T(64,52,.42,ILL.orange);
@@ -625,10 +629,13 @@ const ITEMS=[
  P('vblanc','vins','Vin blanc',500,[VFMT],{note:'Verre, pichet de 50 cl ou bouteille',illOf:s=>s.fmt==='pichet'?'pblanc':s.fmt==='bouteille'?'bblanc':'vblanc'}),
  P('rose','vins','Vin rosé',500,[VFMT],{note:'Verre, pichet de 50 cl ou bouteille',illOf:s=>s.fmt==='pichet'?'prose':s.fmt==='bouteille'?'brose':'rose'}),
  P('pastis','apero','Pastis',350,[],{note:'Avec sa carafe d’eau fraîche'}),
+ P('martini','apero','Martini',500,[],{note:'Avec une olive'}),
+ P('suze','apero','Suze',500,[],{note:'Avec des glaçons et un zeste de citron'}),
  P('demi','apero','Demi de bière',450),
  P('kir','apero','Kir',500),
  P('vodka','apero','Vodka',700),
  P('tequila','apero','Tequila',700,[],{note:'Avec son sel et son citron vert'}),
+ P('rhum','apero','Rhum',700,[],{note:'Rhum ambré avec glaçons et citron vert'}),
  P('whisky','apero','Whisky',700,[{k:'glacons',type:'choice',label:'Avec des glaçons ?',choices:[ch('avec','Avec glaçons','glacons'),ch('sans','Sans glaçons','sansglacons')]}]),
  P('planche','apero','Planche apéro',600,[],{note:'Saucisson, olives et chips'})
 ];
