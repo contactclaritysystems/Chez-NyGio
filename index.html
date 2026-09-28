@@ -300,9 +300,11 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .k-none{text-align:center;color:var(--ink2);padding:10px 0 20px;font-size:17px}
 
 /* overlay */
-.ov{position:fixed;inset:0;background:rgba(40,20,10,.55);display:grid;place-items:center;padding:20px;z-index:50;animation:fade .15s}
+.ov{position:fixed;inset:0;background:rgba(40,20,10,.55);display:grid;place-items:center;padding:20px;z-index:50}
+.ov.anim{animation:fade .15s}
 @keyframes fade{from{opacity:0}}
-.dlg{background:var(--surface);border-radius:30px;padding:26px 24px;width:min(460px,100%);box-shadow:0 10px 0 var(--lip);text-align:center;animation:popin .3s cubic-bezier(.2,.9,.3,1.2)}
+.dlg{background:var(--surface);border-radius:30px;padding:26px 24px;width:min(460px,100%);box-shadow:0 10px 0 var(--lip);text-align:center}
+.ov.anim .dlg{animation:popin .3s cubic-bezier(.2,.9,.3,1.2)}
 .dlg h3{font-family:var(--fd);font-weight:700;font-size:28px;margin:4px 0 8px}
 .dlg p{color:var(--ink2);font-size:17px;margin:0 0 20px}
 .dlg-b{display:flex;gap:12px}
@@ -817,14 +819,15 @@ function vKitchen(){
   <div class="k-act">${o.status==='prep'?`<button class="btn ok sm" data-act="ready" data-v="${o.id}">${IC.bell}C’est prêt</button>`:`<button class="btn ok sm" data-act="served" data-v="${o.id}">${IC.check}Servie</button><button class="mini" data-act="recall" data-v="${o.id}">${IC.speaker}Rappeler</button>`}<div class="spacer"></div><button class="mini danger" data-act="kcancel" data-v="${o.id}">${IC.x}Annuler</button></div></article>`).join('')}</section>`}).join('');
  return `<div class="scroll kitchen" data-keep="kitchen"><div class="k-head"><div class="k-stat"><b>${prep}</b>en préparation</div><div class="k-stat ready"><b>${ready}</b>${ready>1?'prêtes':'prête'}</div></div>${orders.length?'':'<p class="k-none">Aucune commande pour le moment. Les commandes passées sur la borne arrivent ici.</p>'}<div class="k-grid">${groups}</div></div>`}
 
-function vModal(){const m=S.modal;if(!m)return '';
- if(m.type==='confirm')return `<div class="ov"><div class="dlg"><h3>${esc(m.title)}</h3><p>${esc(m.text)}</p><div class="dlg-b"><button class="btn ghost" data-act="mclose">Non</button><button class="btn ${m.danger?'danger':'primary'}" data-act="mok">${esc(m.okLabel)}</button></div></div></div>`;
- if(m.type==='idle')return `<div class="ov"><div class="dlg"><div class="idle-ill">${ill('glace')}</div><h3>Tu es toujours là ?</h3><p>La commande s’annule dans ${m.count} secondes.</p><button class="btn primary" style="width:100%" data-act="mclose">Oui, je suis là !</button></div></div>`;
- if(m.type==='pin')return `<div class="ov"><div class="dlg ${m.err?'shake':''}"><h3>Espace parent</h3><p>Tape le code à 4 chiffres</p><div class="pin-dots">${[0,1,2,3].map(i=>`<i class="${i<m.v.length?'f':''}"></i>`).join('')}</div><div class="keypad" style="margin-bottom:18px">${['1','2','3','4','5','6','7','8','9','','0','del'].map(k=>k===''?'<span></span>':`<button class="key" data-act="pk" data-v="${k}" aria-label="${k==='del'?'Effacer':k}">${k==='del'?IC.backspace:k}</button>`).join('')}</div><button class="btn ghost" style="width:100%" data-act="mclose">Fermer</button></div></div>`;
+let lastModalType=null;
+function vModal(){const m=S.modal;const fresh=!!m&&m.type!==lastModalType;lastModalType=m?m.type:null;if(!m)return '';
+ if(m.type==='confirm')return `<div class="ov${fresh?' anim':''}"><div class="dlg"><h3>${esc(m.title)}</h3><p>${esc(m.text)}</p><div class="dlg-b"><button class="btn ghost" data-act="mclose">Non</button><button class="btn ${m.danger?'danger':'primary'}" data-act="mok">${esc(m.okLabel)}</button></div></div></div>`;
+ if(m.type==='idle')return `<div class="ov${fresh?' anim':''}"><div class="dlg"><div class="idle-ill">${ill('glace')}</div><h3>Tu es toujours là ?</h3><p>La commande s’annule dans ${m.count} secondes.</p><button class="btn primary" style="width:100%" data-act="mclose">Oui, je suis là !</button></div></div>`;
+ if(m.type==='pin')return `<div class="ov${fresh?' anim':''}"><div class="dlg ${m.err?'shake':''}"><h3>Espace parent</h3><p>Tape le code à 4 chiffres</p><div class="pin-dots">${[0,1,2,3].map(i=>`<i class="${i<m.v.length?'f':''}"></i>`).join('')}</div><div class="keypad" style="margin-bottom:18px">${['1','2','3','4','5','6','7','8','9','','0','del'].map(k=>k===''?'<span></span>':`<button class="key" data-act="pk" data-v="${k}" aria-label="${k==='del'?'Effacer':k}">${k==='del'?IC.backspace:k}</button>`).join('')}</div><button class="btn ghost" style="width:100%" data-act="mclose">Fermer</button></div></div>`;
  if(m.type==='parent'){
   const row=(k,l)=>`<div class="setrow"><span>${l}</span><button class="sw ${settings[k]?'on':''}" data-act="pset" data-k="${k}" aria-label="${l}"></button></div>`;
   const cats=CATS.map(c=>`<h5>${c.name}</h5>${ITEMS.filter(i=>i.cat===c.id).map(i=>`<div class="prow ${visible(i)?'':'off'}"><span class="pi">${ill(i.ill)}</span><span class="pn">${esc(i.name)}${i.from?' <small>(supplément)</small>':''}</span><div class="pstep"><button data-act="pprice" data-id="${i.id}" data-d="-50" aria-label="Baisser">−</button><b>${fmt(priceOf(i))}</b><button data-act="pprice" data-id="${i.id}" data-d="50" aria-label="Augmenter">+</button></div><button class="sw ${visible(i)?'on':''}" data-act="phide" data-id="${i.id}" aria-label="Visible"></button></div>`).join('')}`).join('');
-  return `<div class="ov"><div class="sheet"><div class="sheet-h"><h3>Espace parent</h3><button class="icon-btn" data-act="mclose" aria-label="Fermer">${IC.x}</button></div><div class="sheet-b" data-keep="parent">
+  return `<div class="ov${fresh?' anim':''}"><div class="sheet"><div class="sheet-h"><h3>Espace parent</h3><button class="icon-btn" data-act="mclose" aria-label="Fermer">${IC.x}</button></div><div class="sheet-b" data-keep="parent">
   <h4>Réglages</h4>${row('voice','La voix lit les plats')}${row('sound','Les sons de la borne')}${row('idle','Retour à l’accueil si personne ne touche la borne')}
   <h4>Code parent</h4><div class="pinrow"><input id="newpin" type="password" inputmode="numeric" maxlength="4" placeholder="Nouveau code" autocomplete="off"><button class="btn ok sm" data-act="savepin">Enregistrer</button></div>
   <h4>La carte et les prix</h4><p class="hint" style="margin-top:0">L’interrupteur vert affiche le plat sur la borne. Éteins-le si le jouet n’est pas dans les boîtes.</p>${cats}
