@@ -340,6 +340,15 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .pinrow input::placeholder{letter-spacing:0}
 .pinrow input{flex:1;min-width:0;border:2px solid var(--line);border-radius:14px;padding:10px 14px;font-size:20px;background:var(--surface);color:var(--ink);letter-spacing:6px}
 .resets{display:flex;flex-direction:column;gap:10px}
+.sdot{display:inline-block;width:12px;height:12px;border-radius:50%;background:#B9A898;flex:none;vertical-align:middle}
+.sdot.online{background:#2F9E44;box-shadow:0 0 0 3px rgba(47,158,68,.25)}
+.sdot.loading{background:var(--mustard);animation:pulse 1s infinite}
+.sdot.offline{background:#F08A24}.sdot.error{background:var(--red)}
+.hdr.red .sdot{box-shadow:0 0 0 2px #fff}
+.pinrow input.codein{letter-spacing:2px;text-transform:uppercase}
+.seg{display:flex;gap:6px;background:var(--tile);padding:5px;border-radius:16px}
+.segb{flex:1;border:0;background:transparent;border-radius:12px;padding:12px 6px;font-family:var(--fd);font-weight:600;font-size:15px;color:var(--ink2)}
+.segb.on{background:var(--surface);color:var(--ink);box-shadow:0 3px 0 var(--lip)}
 .toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%) translateY(20px);background:#3B1F12;color:#fff;font-family:var(--fd);font-weight:600;font-size:19px;padding:12px 22px;border-radius:999px;display:flex;align-items:center;gap:8px;opacity:0;pointer-events:none;transition:all .25s;z-index:60;white-space:nowrap}
 .toast svg{width:22px;height:22px;color:#7BD389}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -810,11 +819,54 @@ ITEMS.slice(0,3).forEach(i=>ITEM[i.id]=i);
 
 /* ---------- storage ---------- */
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-let settings=Object.assign({voice:true,sound:true,idle:true,pin:'1234',prices:{},hidden:{}},LS.get('nygio_settings',{}));
+let settings=Object.assign({voice:true,sound:true,idle:true,pin:'1234',prices:{},hidden:{},syncCode:'',role:'both'},LS.get('nygio_settings',{}));
 let orders=LS.get('nygio_orders',[]);if(!Array.isArray(orders))orders=[];
 let counter=LS.get('nygio_counter',0)||0;
 orders.forEach(o=>{if(o.paid===undefined)o.paid=true});
 const saveAll=()=>{LS.set('nygio_settings',settings);LS.set('nygio_orders',orders);LS.set('nygio_counter',counter)};
+
+/* ---------- synchronisation Firebase ---------- */
+const FB_CONFIG={apiKey:"AIzaSyALXPRaN4tXp3yPSFMylYvUrNUKJViGqHo",authDomain:"chez-nygio.firebaseapp.com",databaseURL:"https://chez-nygio-default-rtdb.europe-west1.firebasedatabase.app",projectId:"chez-nygio",storageBucket:"chez-nygio.firebasestorage.app",messagingSenderId:"971796688639",appId:"1:971796688639:web:0fb010211823f3e40a26ca"};
+const FB_V='10.14.1';
+let DB=null,syncState='off',syncGen=0,hydrated=false,knownStatus={};
+const mine=new Set();
+const clean=o=>JSON.parse(JSON.stringify(o));
+const normO=o=>{o.lines=(Array.isArray(o.lines)?o.lines:Object.values(o.lines||{})).map(l=>Object.assign({det:[],th:[],sel:{},done:false,qty:1,unit:0},l));return o};
+function loadScript(src){return new Promise((res,rej)=>{const e=document.createElement('script');e.src=src;e.onload=res;e.onerror=()=>rej(new Error('script '+src));document.head.appendChild(e)})}
+function putOrder(o){if(!orders.includes(o))orders.push(o);LS.set('nygio_orders',orders);if(DB)DB.child('orders/'+o.id).set(clean(o)).catch(e=>console.warn(e))}
+function delOrders(ids){if(!ids.length)return;orders=orders.filter(o=>!ids.includes(o.id));LS.set('nygio_orders',orders);if(DB){const u={};ids.forEach(id=>u['orders/'+id]=null);DB.update(u).catch(e=>console.warn(e))}}
+function syncCounter(){LS.set('nygio_counter',counter);if(DB)DB.child('counter').set(counter).catch(e=>console.warn(e))}
+function renderSoft(){const a=document.activeElement;if(a&&a.tagName==='INPUT')return;render()}
+function stopSync(){syncGen++;if(DB){try{DB.child('orders').off();DB.child('counter').off();firebase.database().ref('.info/connected').off()}catch(e){}}DB=null;hydrated=false;knownStatus={};syncState='off'}
+function applyRemote(val){
+ const list=(val?Object.values(val):[]).filter(o=>o&&o.id&&TABLES[o.table]).map(normO);
+ const news=[],readys=[];
+ list.forEach(o=>{const prev=knownStatus[o.id];
+  if(hydrated&&prev===undefined&&!mine.has(o.id)&&o.status==='prep')news.push(o);
+  if(hydrated&&prev==='prep'&&o.status==='ready'&&!mine.has(o.id+':ready'))readys.push(o)});
+ knownStatus={};list.forEach(o=>knownStatus[o.id]=o.status);hydrated=true;
+ orders=list;LS.set('nygio_orders',orders);renderSoft();
+ if(news.length&&settings.role!=='borne'){sfx('bip');say(news.length>1?news.length+' nouvelles commandes !':'Nouvelle commande, '+(news[0].table==='E'?'à emporter':'table '+news[0].table))}
+ if(readys.length&&settings.role!=='cuisine')readys.forEach((o,i)=>setTimeout(()=>announce(o),i*3500));
+}
+async function startSync(){
+ stopSync();const code=settings.syncCode;if(!code){render();return}
+ const gen=syncGen;syncState='loading';renderSoft();
+ try{
+  if(!(window.firebase&&firebase.database&&firebase.auth)){for(const f of ['app','auth','database'])await loadScript(`https://cdn.jsdelivr.net/npm/firebase@${FB_V}/firebase-${f}-compat.js`)}
+  if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);
+  await firebase.auth().signInAnonymously();
+  if(gen!==syncGen)return;
+  DB=firebase.database().ref('restaurants/'+code);
+  firebase.database().ref('.info/connected').on('value',sn=>{if(gen!==syncGen)return;syncState=sn.val()?'online':'offline';renderSoft()});
+  let first=true;
+  DB.child('orders').on('value',sn=>{if(gen!==syncGen)return;const v=sn.val();
+   if(first){first=false;if(!v&&orders.length){orders.forEach(o=>{knownStatus[o.id]=o.status;DB.child('orders/'+o.id).set(clean(o))});hydrated=true;return}}
+   applyRemote(v)},err=>{console.warn(err);syncState='error';renderSoft()});
+  DB.child('counter').on('value',sn=>{if(gen!==syncGen)return;const v=sn.val();if(v===null){if(counter>0)DB.child('counter').set(counter);return}counter=Number(v)||0;LS.set('nygio_counter',counter)});
+ }catch(e){console.warn(e);if(gen===syncGen){syncState='error';renderSoft()}}
+}
+const SYNC_LABEL={off:'Non connecté',loading:'Connexion…',online:'Connecté',offline:'Hors ligne, en attente du réseau',error:'Connexion impossible'};
 
 /* ---------- utils ---------- */
 const fmt=c=>{const e=Math.floor(c/100),r=c%100;return (r?`${e},${String(r).padStart(2,'0')}`:`${e}`)+'\u00a0€'};
@@ -857,6 +909,7 @@ if('speechSynthesis' in window){try{speechSynthesis.getVoices()}catch(e){}}
 
 /* ---------- state ---------- */
 const S={tab:'order',screen:'welcome',mode:null,table:null,cat:'formules',cart:[],prod:null,sel:{},qty:1,editUid:null,prodFrom:'menu',pay:null,modal:null,last:null,upsellOff:false,toast:null,bump:false,bill:null};
+if(settings.role==='cuisine')S.tab='kitchen';
 let lastAct=Date.now(),toastT=null,ticketT=null;
 const $app=document.getElementById('app');
 
@@ -874,7 +927,7 @@ function header(){
  let ctx='';if(ord&&!['welcome','mode','table','billtable'].includes(S.screen)){const t=S.bill?S.bill:S.mode==='place'?String(S.table):'E';if(S.mode)ctx=`<div class="ctx" style="--tc:${TABLES[t].c}"><span class="an">${animal(t)}</span><span>${tLabel(t)}</span></div>`}
  const cancel=ord&&['menu','product','cart','paychoose','cash'].includes(S.screen)?`<button class="cancel-btn" data-act="cancelOrder">${IC.x}<span>Annuler</span></button>`:'';
  const n=activeOrders().length;
- return `<header class="hdr ${wel?'red':''}">${left}<div class="brand"><span class="lg">${LOGO}</span><span class="bn">Chez NyGio</span></div>${ctx}<div class="spacer"></div>${cancel}<div class="tabs" role="tablist"><button class="tab ${ord?'on':''}" data-act="tab" data-v="order">${IC.cart}<span>Commande</span></button><button class="tab ${!ord?'on':''}" data-act="tab" data-v="kitchen">${IC.chef}<span>Cuisine</span>${n?`<span class="badge">${n}</span>`:''}</button></div><button class="icon-btn gear" data-act="gear" aria-label="Espace parent">${IC.gear}</button></header>`}
+ return `<header class="hdr ${wel?'red':''}">${left}<div class="brand"><span class="lg">${LOGO}</span><span class="bn">Chez NyGio</span></div>${ctx}<div class="spacer"></div>${cancel}${settings.syncCode?`<span class="sdot ${syncState}" title="${SYNC_LABEL[syncState]}"></span>`:''}${settings.role!=='both'?'':`<div class="tabs" role="tablist"><button class="tab ${ord?'on':''}" data-act="tab" data-v="order">${IC.cart}<span>Commande</span></button><button class="tab ${!ord?'on':''}" data-act="tab" data-v="kitchen">${IC.chef}<span>Cuisine</span>${n?`<span class="badge">${n}</span>`:''}</button></div>`}<button class="icon-btn gear" data-act="gear" aria-label="Espace parent">${IC.gear}</button></header>`}
 
 function vWelcome(){
  const fl=[['burger',5,12,-10,0],['glace',80,9,12,.8],['jus',6,66,8,1.6],['donut',82,62,-14,.4],['fraise',22,86,14,2.2],['croissant',68,85,-6,1.2]];
@@ -967,6 +1020,10 @@ function vModal(){const m=S.modal;const fresh=!!m&&m.type!==lastModalType;lastMo
   const cats=CATS.map(c=>`<h5>${c.name}</h5>${ITEMS.filter(i=>i.cat===c.id).map(i=>`<div class="prow ${visible(i)?'':'off'}"><span class="pi">${ill(i.ill)}</span><span class="pn">${esc(i.name)}${i.from?' <small>(supplément)</small>':''}</span><div class="pstep"><button data-act="pprice" data-id="${i.id}" data-d="-50" aria-label="Baisser">−</button><b>${fmt(priceOf(i))}</b><button data-act="pprice" data-id="${i.id}" data-d="50" aria-label="Augmenter">+</button></div><button class="sw ${visible(i)?'on':''}" data-act="phide" data-id="${i.id}" aria-label="Visible"></button></div>`).join('')}`).join('');
   return `<div class="ov${fresh?' anim':''}"><div class="sheet"><div class="sheet-h"><h3>Espace parent</h3><button class="icon-btn" data-act="mclose" aria-label="Fermer">${IC.x}</button></div><div class="sheet-b" data-keep="parent">
   <h4>Réglages</h4>${row('voice','La voix lit les plats')}${row('sound','Les sons de la borne')}${row('idle','Retour à l’accueil si personne ne touche la borne')}
+  <h4>Synchroniser deux appareils</h4><p class="hint" style="margin-top:0">Tape le même code restaurant sur la tablette et sur le téléphone : les commandes passent de l’un à l’autre en direct.</p>
+  <div class="pinrow"><input id="synccode" class="codein" type="text" placeholder="Code restaurant, ex. NYGIO" value="${esc(settings.syncCode||'')}" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="20"><button class="btn ok sm" data-act="syncon">${settings.syncCode?'Changer':'Connecter'}</button></div>
+  ${settings.syncCode?`<div class="setrow" style="margin-top:8px"><span><span class="sdot ${syncState}"></span> ${SYNC_LABEL[syncState]} · ${esc(settings.syncCode)}</span><button class="btn ghost sm" data-act="syncoff">Déconnecter</button></div>`:''}
+  <h5>Cet appareil sert de</h5><div class="seg">${[['both','Borne et cuisine'],['borne','Borne'],['cuisine','Cuisine']].map(([v,l])=>`<button class="segb ${settings.role===v?'on':''}" data-act="role" data-v="${v}">${l}</button>`).join('')}</div>
   <h4>Code parent</h4><div class="pinrow"><input id="newpin" type="password" inputmode="numeric" maxlength="4" placeholder="Nouveau code" autocomplete="off"><button class="btn ok sm" data-act="savepin">Enregistrer</button></div>
   <h4>La carte et les prix</h4><p class="hint" style="margin-top:0">L’interrupteur vert affiche le plat sur la borne. Éteins-le si le jouet n’est pas dans les boîtes.</p>${cats}
   <h4>Remise à zéro</h4><div class="resets"><button class="btn ghost sm" data-act="resetPrices">Remettre les prix d’origine</button><button class="btn ghost sm" data-act="clearOrders">Effacer toutes les commandes en cuisine</button><button class="btn ghost sm" data-act="resetNum">Recommencer les numéros à 1</button></div></div></div></div>`}
@@ -975,6 +1032,7 @@ function vModal(){const m=S.modal;const fresh=!!m&&m.type!==lastModalType;lastMo
 function vScreen(){switch(S.screen){case 'welcome':return vWelcome();case 'mode':return vMode();case 'table':return vTable();case 'menu':return vMenu();case 'product':return vProduct();case 'cart':return vCart();case 'paychoose':return vPayChoose();case 'card':return vCard();case 'cash':return vCash();case 'change':return vChange();case 'ticket':return vTicket();case 'billtable':return vBillTable();case 'bill':return vBill()}return ''}
 
 function render(){
+ if(settings.role==='borne')S.tab='order';else if(settings.role==='cuisine')S.tab='kitchen';
  const keep={};$app.querySelectorAll('[data-keep]').forEach(e=>keep[e.dataset.keep]=e.scrollTop);
  $app.innerHTML=header()+`<main class="main">${S.tab==='kitchen'?vKitchen():vScreen()}</main>`+vModal()+`<div class="toast ${S.toast?'show':''}" role="status">${IC.check}<span>${esc(S.toast||'')}</span></div>`;
  $app.querySelectorAll('[data-keep]').forEach(e=>{if(keep[e.dataset.keep]!=null)e.scrollTop=keep[e.dataset.keep]});
@@ -993,17 +1051,17 @@ function addToCart(){const it=ITEM[S.prod];const unit=unitPrice(it,S.sel);const 
  toast('Ajouté à ta commande');setTimeout(()=>{S.bump=false},500)}
 function sendKitchen(){if(!S.cart.length||S.screen==='ticket')return;counter++;
  const o={id:uid(),num:counter,table:String(S.table),lines:S.cart.map(l=>Object.assign({},l,{done:false})),total:cartTotal(),pay:null,paid:false,status:'prep',t:Date.now()};
- orders.push(o);saveAll();S.last=Object.assign({kind:'sent'},o);sfx('print');go('ticket');say('C’est parti en cuisine ! Tu paieras à la fin du repas.');
+ mine.add(o.id);putOrder(o);syncCounter();S.last=Object.assign({kind:'sent'},o);sfx('print');go('ticket');say('C’est parti en cuisine ! Tu paieras à la fin du repas.');
  clearTimeout(ticketT);ticketT=setTimeout(()=>{if(S.screen==='ticket')resetOrder()},30000)}
 function finalize(){if(S.screen==='ticket')return;
  if(S.bill){const t=S.bill;const os=openOrders(t);const lines=[].concat(...os.map(o=>o.lines));const total=billTotal(t);
-  os.forEach(o=>{o.paid=true;o.pay=S.pay.method});orders=orders.filter(o=>!(o.paid&&o.status==='served'));saveAll();
+  const del=[];os.forEach(o=>{o.paid=true;o.pay=S.pay.method;if(o.status==='served')del.push(o.id);else putOrder(o)});delOrders(del);
   S.last={kind:'bill',table:t,lines,total,pay:S.pay.method,given:S.pay.given||0,change:S.pay.change||0,t:Date.now()};
   sfx('print');go('ticket');say('Merci ! L’addition de la table '+t+' est réglée. À bientôt !');
   clearTimeout(ticketT);ticketT=setTimeout(()=>{if(S.screen==='ticket')resetOrder()},30000);return}
  counter++;
  const o={id:uid(),num:counter,table:S.mode==='place'?String(S.table):'E',lines:S.cart.map(l=>Object.assign({},l,{done:false})),total:cartTotal(),pay:S.pay.method,paid:true,given:S.pay.given||0,change:S.pay.change||0,status:'prep',t:Date.now()};
- orders.push(o);saveAll();S.last=Object.assign({kind:'order'},o);sfx('print');go('ticket');say('Merci ! Ta commande numéro '+o.num+' part en cuisine.');
+ mine.add(o.id);putOrder(o);syncCounter();S.last=Object.assign({kind:'order'},o);sfx('print');go('ticket');say('Merci ! Ta commande numéro '+o.num+' part en cuisine.');
  clearTimeout(ticketT);ticketT=setTimeout(()=>{if(S.screen==='ticket')resetOrder()},30000)}
 const findO=id=>orders.find(o=>o.id===id);
 function announce(o){sfx('ding');setTimeout(()=>say(`Commande numéro ${o.num}, ${o.table==='E'?'à emporter':'table '+o.table}, c’est prêt !`),900)}
@@ -1046,12 +1104,12 @@ const A={
  finish(){finalize()},
  newOrder(){sfx('tap');resetOrder()},
  cancelOrder(){if(S.bill){confirmBox('Arrêter le paiement ?','L’addition reste ouverte, tu pourras payer plus tard.','Oui, arrêter',()=>{resetOrder()});return}confirmBox('Annuler la commande ?','Tout ce que tu as choisi sera effacé.','Oui, annuler',()=>{resetOrder();say('Commande annulée')},true)},
- kline(d){const o=findO(d.o);if(!o)return;const l=o.lines[Number(d.i)];l.done=!l.done;saveAll();sfx(l.done?'key':'tap');render()},
- ready(d){const o=findO(d.v);if(!o)return;o.status='ready';o.lines.forEach(l=>l.done=true);saveAll();render();announce(o)},
+ kline(d){const o=findO(d.o);if(!o)return;const l=o.lines[Number(d.i)];if(!l)return;l.done=!l.done;putOrder(o);sfx(l.done?'key':'tap');render()},
+ ready(d){const o=findO(d.v);if(!o)return;o.status='ready';o.lines.forEach(l=>l.done=true);mine.add(o.id+':ready');putOrder(o);render();announce(o)},
  recall(d){const o=findO(d.v);if(o)announce(o)},
- served(d){const o=findO(d.v);if(!o)return;if(o.paid)orders=orders.filter(x=>x.id!==d.v);else o.status='served';saveAll();sfx('add');say('Bon appétit !');render()},
- kcancel(d){const o=findO(d.v);if(!o)return;confirmBox('Annuler la commande n° '+o.num+' ?','Elle sera retirée de la cuisine.','Oui, annuler',()=>{orders=orders.filter(x=>x.id!==d.v);saveAll()},true)},
- free(d){confirmBox('Libérer la '+tLabel(d.v).toLowerCase()+' ?','Les commandes et l’addition de cette table seront effacées.','Oui, libérer',()=>{orders=orders.filter(o=>o.table!==d.v);saveAll()},true)},
+ served(d){const o=findO(d.v);if(!o)return;if(o.paid)delOrders([o.id]);else{o.status='served';putOrder(o)}sfx('add');say('Bon appétit !');render()},
+ kcancel(d){const o=findO(d.v);if(!o)return;confirmBox('Annuler la commande n° '+o.num+' ?','Elle sera retirée de la cuisine.','Oui, annuler',()=>{delOrders([d.v])},true)},
+ free(d){confirmBox('Libérer la '+tLabel(d.v).toLowerCase()+' ?','Les commandes et l’addition de cette table seront effacées.','Oui, libérer',()=>{delOrders(orders.filter(o=>o.table===d.v).map(o=>o.id))},true)},
  gear(){sfx('tap');S.modal={type:'pin',v:''};render()},
  pk(d){const m=S.modal;m.err=false;if(d.v==='del')m.v=m.v.slice(0,-1);else if(m.v.length<4){m.v+=d.v;sfx('key')}
   if(m.v.length===4){if(m.v===settings.pin){S.modal={type:'parent'};sfx('ok')}else{m.v='';m.err=true;sfx('err')}}render()},
@@ -1063,8 +1121,11 @@ const A={
  pprice(d){const it=ITEM[d.id];settings.prices[d.id]=Math.max(0,priceOf(it)+Number(d.d));saveAll();render()},
  phide(d){if(settings.hidden[d.id])delete settings.hidden[d.id];else settings.hidden[d.id]=true;saveAll();render()},
  resetPrices(){confirmBox('Remettre les prix d’origine ?','Tous les prix modifiés reviennent à la carte de départ.','Oui',()=>{settings.prices={};saveAll()})},
- clearOrders(){confirmBox('Effacer toutes les commandes ?','La cuisine sera vidée.','Oui, effacer',()=>{orders=[];saveAll()},true)},
- resetNum(){confirmBox('Recommencer les numéros ?','La prochaine commande aura le numéro 1.','Oui',()=>{counter=0;saveAll()})}
+ clearOrders(){confirmBox('Effacer toutes les commandes ?','La cuisine sera vidée.','Oui, effacer',()=>{delOrders(orders.map(o=>o.id))},true)},
+ syncon(){const el=document.getElementById('synccode');const v=(el?el.value:'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(v.length<3){toast('Le code doit avoir au moins 3 lettres ou chiffres');return}settings.syncCode=v;saveAll();if(el)el.blur();startSync();toast('Connexion au restaurant '+v)},
+ syncoff(){settings.syncCode='';saveAll();stopSync();render();toast('Synchronisation arrêtée')},
+ role(d){settings.role=d.v;saveAll();S.tab=d.v==='cuisine'?'kitchen':'order';render()},
+ resetNum(){confirmBox('Recommencer les numéros ?','La prochaine commande aura le numéro 1.','Oui',()=>{counter=0;syncCounter()})}
 };
 
 /* no zoom */
@@ -1085,6 +1146,7 @@ setInterval(()=>{
 setInterval(()=>{if(S.tab==='kitchen'&&!S.modal)render()},30000);
 
 render();
+if(settings.syncCode)startSync();
 })();
 </script>
 </body>
