@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#E63B2E">
@@ -29,6 +29,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 input{user-select:text;-webkit-user-select:text;font:inherit}
 svg{display:block;width:100%;height:100%}
 :focus-visible{outline:4px solid var(--mustard);outline-offset:3px}
+html,body,*{touch-action:pan-x pan-y}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 #app{height:100%;display:flex;flex-direction:column}
 
 /* header */
@@ -855,6 +857,13 @@ const A={
  resetNum(){confirmBox('Recommencer les numéros ?','La prochaine commande aura le numéro 1.','Oui',()=>{counter=0;saveAll()})}
 };
 
+/* no zoom */
+['gesturestart','gesturechange','gestureend'].forEach(ev=>document.addEventListener(ev,e=>e.preventDefault(),{passive:false}));
+document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});
+document.addEventListener('touchstart',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});
+document.addEventListener('wheel',e=>{if(e.ctrlKey)e.preventDefault()},{passive:false});
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&['+','-','=','0'].includes(e.key))e.preventDefault()});
+document.addEventListener('dblclick',e=>e.preventDefault());
 document.addEventListener('pointerdown',()=>{lastAct=Date.now();ac()},{passive:true});
 document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el||el.disabled)return;const f=A[el.dataset.act];if(f)f(el.dataset,e)});
 
