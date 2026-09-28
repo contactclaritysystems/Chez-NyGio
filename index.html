@@ -60,6 +60,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .pad{padding:22px}
 .center-col{display:flex;flex-direction:column;align-items:center;text-align:center}
+.center-col>*{flex-shrink:0}
 .q{font-family:var(--fd);font-weight:700;font-size:clamp(30px,5.5vw,44px);line-height:1.05;margin:6px 0 22px;text-align:center}
 
 /* buttons */
@@ -198,7 +199,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .cardart::after{content:"NyGio";position:absolute;left:18px;bottom:14px;color:#fff;font-family:var(--fd);font-weight:600;font-size:18px}
 .cashart{display:flex;align-items:center;gap:6px}
 .cashart .b{width:130px}.cashart .c{width:62px}
-.tpe-zone{position:relative;width:330px;height:300px;margin:0 auto 10px;max-width:100%}
+.tpe-zone{position:relative;width:330px;height:320px;margin:0 auto 10px;max-width:100%}
 .tpe{position:absolute;left:14px;top:14px;width:176px;height:272px;background:#2B2B33;border-radius:28px;padding:14px;box-shadow:0 8px 0 #15151a}
 .tpe-scr{background:#D4EBD6;color:#1C3A22;border-radius:14px;height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:var(--fd);font-weight:600;font-size:17px;text-align:center;padding:6px}
 .tpe-scr b{font-size:26px}
@@ -218,7 +219,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .cb .cbn{position:absolute;left:14px;bottom:12px;font-weight:600;font-size:17px}
 .cb .cbnum{position:absolute;right:14px;bottom:13px;font-size:13px;opacity:.85}
 .cb .wv{position:absolute;right:12px;top:12px;width:26px;height:26px}
-.keypad{display:grid;grid-template-columns:repeat(3,76px);gap:12px;justify-content:center;margin-top:8px}
+.keypad{display:grid;grid-template-columns:repeat(3,76px);gap:12px;justify-content:center;margin-top:18px;position:relative;z-index:3}
 .key{width:76px;height:70px;border:0;border-radius:20px;background:var(--surface);box-shadow:0 5px 0 var(--lip);font-family:var(--fd);font-weight:600;font-size:30px;display:grid;place-items:center}
 .key:active{transform:translateY(4px);box-shadow:0 1px 0 var(--lip)}
 .key svg{width:30px;height:30px}
@@ -242,12 +243,15 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @keyframes popin{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
 
 /* ticket */
-.tk-wrap{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:22px 16px 40px;gap:18px}
+.tk-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:flex;flex-direction:column;align-items:center;padding:22px 16px 40px;gap:18px}
+.tk-wrap>*{flex-shrink:0}
 .slot{width:min(430px,94%);height:20px;background:#3B1F12;border-radius:10px;position:relative;z-index:2;box-shadow:inset 0 -6px 0 #1f0f08}
 .tk-clip{width:min(380px,86%);overflow:hidden;margin-top:-28px;padding-top:10px}
-.ticket{background:#FFFFFF;color:#2B2B2B;font-family:'Courier New',ui-monospace,monospace;font-weight:700;padding:22px 20px 30px;animation:printk 2s steps(20) both;font-size:15px;position:relative;
+.ticket{background:#FFFFFF;color:#2B2B2B;font-family:'Courier New',ui-monospace,monospace;font-weight:700;padding:22px 20px 30px;font-size:15px;position:relative;
   -webkit-mask:radial-gradient(8px at 50% 100%,#0000 98%,#000) 50% 100%/16px 100% repeat-x;mask:radial-gradient(8px at 50% 100%,#0000 98%,#000) 50% 100%/16px 100% repeat-x}
-@keyframes printk{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+@keyframes printk{0%{transform:translateY(-100%)}100%{transform:translateY(0)}}
+.ticket.print{animation:printk 2s steps(20) both}
+@keyframes printk_old{from{transform:translateY(-100%)}to{transform:translateY(0)}}
 .tk-c{text-align:center}
 .tk-logo{width:64px;height:64px;margin:0 auto 6px}
 .tk-name{font-family:var(--fd);font-size:26px;font-weight:700}
@@ -460,7 +464,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
  .cardart::before{left:10px;top:17px;width:22px;height:16px;border-radius:4px}
  .cardart::after{left:10px;bottom:6px;font-size:12px}
  .cashart .b{width:78px}.cashart .c{width:38px}
- .tpe-zone{transform:scale(.85);transform-origin:top center;margin-bottom:-40px}
+ .tpe-zone{transform:scale(.85);transform-origin:top center;margin-bottom:-24px}
  .keypad{grid-template-columns:repeat(3,64px);gap:10px}
  .key{width:64px;height:56px;font-size:26px;border-radius:16px}
  .cash-top{gap:6px;margin-bottom:10px}
@@ -934,12 +938,13 @@ function changeOf(a){const r=[];[5000,2000,1000,500,200,100,50,20,10,5,2,1].forE
 function vChange(){const c=S.pay.change;
  return `<div class="scroll pad center-col"><h2 class="q">${c?'Je te rends la monnaie':'Compte juste, merci !'}</h2>${c?`<div class="bigtotal">${fmt(c)}</div><div class="change-row">${changeOf(c).filter(v=>v>=50).map((v,i)=>`<span class="${v>=500?'bill':'coin'} pop" style="animation-delay:${i*.15}s">${MONEY(v)}</span>`).join('')}</div>`:`<div style="width:160px;height:160px;margin:10px auto 26px">${ill('donut')}</div>`}<button class="btn primary" data-act="finish">Prendre mon ticket</button></div>`}
 
-function vTicket(){const o=S.last;if(!o)return '';const d=new Date(o.t);
+let lastTicket=null;
+function vTicket(){const o=S.last;if(!o)return '';const fresh=o!==lastTicket;lastTicket=o;const d=new Date(o.t);
  const lines=o.lines.map(l=>`<div class="tk-l"><span>${l.qty}× ${esc(l.name)}</span><span>${fmt(l.unit*l.qty)}</span></div>${l.det.length?`<div class="tk-d">${l.det.map(x=>esc(x.t)).join(' · ')}</div>`:''}`).join('');
  const title=o.kind==='bill'?'<div class="tk-num">Addition<b style="font-size:40px">Table '+o.table+'</b></div>':`<div class="tk-num">${o.kind==='sent'?'Bon de commande':'Commande'} n°<b>${o.num}</b></div>`;
  const payLine=o.kind==='sent'?'<div class="tk-c">À payer à la fin du repas</div>':`<div>Payé ${o.pay==='carte'?'par carte':'en espèces'}</div>${o.pay==='especes'?`<div>Donné : ${fmt(o.given)} · Rendu : ${fmt(o.change)}</div>`:''}`;
  const thanks=o.kind==='sent'?'C’est parti en cuisine !':o.kind==='bill'?'Merci et à bientôt !':'Merci et bon appétit !';
- return `<div class="tk-wrap"><div class="slot"></div><div class="tk-clip"><div class="ticket"><div class="tk-c"><div class="tk-logo">${LOGO}</div><div class="tk-name">Chez NyGio</div><div>${d.toLocaleDateString('fr-FR')} ${d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div><hr class="tk-hr">${title}<div class="tk-where" style="--tc:${TABLES[o.table].c}"><span class="an">${animal(o.table)}</span>${tLabel(o.table)}</div></div><hr class="tk-hr">${lines}<hr class="tk-hr"><div class="tk-tot"><span>TOTAL</span><span>${fmt(o.total)}</span></div>${payLine}<hr class="tk-hr"><div class="tk-c tk-thanks">${thanks}</div></div></div><button class="btn primary" data-act="newOrder">${o.kind==='sent'?'Terminé':'Nouvelle commande'}</button></div>`}
+ return `<div class="tk-wrap"><div class="slot"></div><div class="tk-clip"><div class="ticket${fresh?' print':''}"><div class="tk-c"><div class="tk-logo">${LOGO}</div><div class="tk-name">Chez NyGio</div><div>${d.toLocaleDateString('fr-FR')} ${d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div><hr class="tk-hr">${title}<div class="tk-where" style="--tc:${TABLES[o.table].c}"><span class="an">${animal(o.table)}</span>${tLabel(o.table)}</div></div><hr class="tk-hr">${lines}<hr class="tk-hr"><div class="tk-tot"><span>TOTAL</span><span>${fmt(o.total)}</span></div>${payLine}<hr class="tk-hr"><div class="tk-c tk-thanks">${thanks}</div></div></div><button class="btn primary" data-act="newOrder">${o.kind==='sent'?'Terminé':'Nouvelle commande'}</button></div>`}
 
 function ago(t){const m=Math.floor((Date.now()-t)/60000);return m<1?'à l’instant':m<60?`il y a ${m} min`:`il y a ${Math.floor(m/60)} h`}
 function vKitchen(){
