@@ -91,7 +91,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 
 /* mode + tables */
-.big2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;width:min(760px,100%);margin:0 auto}
+.big2{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;width:min(820px,100%);margin:0 auto}
+.bigcard.dim{opacity:.45}
+.tbl .due{background:#fff;color:#3B1F12;border-radius:999px;padding:2px 12px;font-size:16px;font-weight:600}
 .bigcard{border:0;background:var(--surface);border-radius:32px;padding:24px 20px 26px;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 8px 0 var(--lip);font-family:var(--fd);font-weight:700;font-size:30px}
 .bigcard:active{transform:translateY(5px);box-shadow:0 3px 0 var(--lip)}
 .bigcard .ill{width:min(220px,60%);aspect-ratio:1;background:var(--tile);border-radius:50%;padding:22px}
@@ -450,6 +452,18 @@ const PICHET=w=>`<path d="M38,24 h44 l-6,14 q14,14 14,36 q0,28 -30,32 q-30,-4 -3
 ILL.vrouge=WINE('#8E1B3A');ILL.vblanc=WINE('#F3E3A0');
 ILL.brouge=BOTTLE('#2F5D3A','#8E1B3A');ILL.bblanc=BOTTLE('#8DB85A','#E0B43A');ILL.brose=BOTTLE('#F4B6C4','#D94F7A');
 ILL.prouge=PICHET('#8E1B3A');ILL.pblanc=PICHET('#F3E3A0');ILL.prose=PICHET('#FFB3C1');
+const CAFE='<ellipse cx="60" cy="102" rx="46" ry="10" fill="#FFFFFF" stroke="#E4D6C3" stroke-width="3"/><path d="M92,62 q16,0 16,14 q0,14 -18,14" stroke="#E4D6C3" stroke-width="11" fill="none"/><path d="M92,62 q16,0 16,14 q0,14 -18,14" stroke="#FFFFFF" stroke-width="6" fill="none"/><path d="M26,52 h70 q-2,44 -35,46 q-33,-2 -35,-46z" fill="#FFFFFF" stroke="#E4D6C3" stroke-width="3"/><ellipse cx="61" cy="52" rx="35" ry="8" fill="#6B3A1E" stroke="#E4D6C3" stroke-width="3"/><ellipse cx="54" cy="51" rx="10" ry="2.5" fill="#A0673A"/><circle cx="61" cy="76" r="6" fill="#E63B2E"/><g stroke="#D5C3B0" stroke-width="4" fill="none" stroke-linecap="round"><path d="M48,38 q-6,-9 0,-17 q6,-8 0,-15"/><path d="M68,38 q-6,-9 0,-17 q6,-8 0,-15"/></g>';
+ILL.cafe=CAFE;
+const SHOT=(liq,extra)=>`<path d="M36,40 h48 l-7,68 h-34z" fill="#EAF6FF" stroke="#CFE3F2" stroke-width="2"/><path d="M38.5,58 h43 l-5.3,48 h-32.4z" fill="${liq}"/><rect x="44" y="62" width="5" height="38" rx="2.5" fill="#fff" opacity=".5"/>${extra||''}`;
+ILL.vodka=SHOT('#E3F1FF','<path d="M36,40 h48" stroke="#CFE3F2" stroke-width="3"/>')+SLICE(84,40,'#F2C200','#FFF08A');
+ILL.tequila=SHOT('#F2C14E',[40,48,56,64,72,80].map(x=>`<circle cx="${x}" cy="40" r="2.6" fill="#fff" stroke="#E4D6C3" stroke-width=".8"/>`).join(''))+'<path d="M76,44 a14,14 0 0,1 28,0z" fill="#4CAF50"/><path d="M79,44 a11,11 0 0,1 22,0z" fill="#C5E86C"/>';
+const CAN=(body,deco)=>`<rect x="38" y="14" width="44" height="10" rx="4" fill="#C9CDD3"/><rect x="34" y="20" width="52" height="88" rx="10" fill="${body}"/><rect x="34" y="98" width="52" height="10" rx="5" fill="#C9CDD3"/><rect x="40" y="28" width="6" height="64" rx="3" fill="#fff" opacity=".3"/>${deco}`;
+ILL.coca=CAN('#D62828','<circle cx="68" cy="46" r="4" fill="#fff" opacity=".8"/><circle cx="60" cy="62" r="6" fill="#fff" opacity=".8"/><circle cx="72" cy="76" r="3.5" fill="#fff" opacity=".8"/><circle cx="58" cy="84" r="3" fill="#fff" opacity=".8"/>');
+ILL.fanta=CAN('#FF8C1A',SLICE(62,62,'#FFFFFF','#FFB347'));
+ILL.oasis=CAN('#FFC23C','<circle cx="56" cy="66" r="12" fill="#FF8C1A"/><circle cx="72" cy="72" r="9" fill="#E63B2E"/><path d="M58,54 q10,-12 20,-6 q-8,10 -20,6z" fill="#3FA34D"/>');
+const SIROP=c=>'<line x1="55" y1="56" x2="71" y2="10" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/><line x1="55" y1="56" x2="71" y2="10" stroke="#3A86FF" stroke-width="6" stroke-linecap="round" stroke-dasharray="4 6"/>'+GLASS(c,ICE(48,60,15)+ICE(62,76,-10));
+ILL.sirop_g=SIROP('#D7263D');ILL.sirop_m=SIROP('#3CC47C');ILL.sirop_f=SIROP('#FF5C8A');ILL.sirop_c=SIROP('#F7E35A');
+ILL.addition='<path d="M32,12 h56 v92 l-7,-6 -7,6 -7,-6 -7,6 -7,-6 -7,6 -7,-6 -7,6z" fill="#FFFFFF" stroke="#E4D6C3" stroke-width="2.5"/><g stroke="#D5C3B0" stroke-width="4" stroke-linecap="round"><path d="M42,30 h36M42,42 h28M42,54 h32M42,66 h24"/></g><path d="M42,80 h36" stroke="#3B1F12" stroke-width="5" stroke-linecap="round"/><circle cx="90" cy="92" r="20" fill="#E9BD4C" stroke="#C99A2A" stroke-width="3"/><text x="90" y="100" text-anchor="middle" font-family="Fredoka,Trebuchet MS,sans-serif" font-weight="700" font-size="22" fill="#6B4A10">€</text>';
 ILL.whisky='<path d="M24,46 h72 l-6,60 q-30,6 -60,0z" '+GLASSW+'/><path d="M27,68 h66 l-3.6,38 q-29.4,6 -58.8,0z" fill="#C8752A"/>'+ICE(38,58,15).replace('opacity=".75"','opacity=".9"')+ICE(58,62,-12).replace('opacity=".75"','opacity=".9"')+ICE(72,56,20).replace('opacity=".75"','opacity=".9"');
 ILL.planche=`<rect x="98" y="66" width="18" height="12" rx="6" fill="#B9773A"/><rect x="6" y="46" width="96" height="56" rx="14" fill="#B9773A"/><rect x="10" y="50" width="88" height="48" rx="11" fill="#D39456"/>${[[28,66],[44,62],[36,80]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="10" fill="#A8323A"/><circle cx="${x-3}" cy="${y-2}" r="1.6" fill="#fff"/><circle cx="${x+3}" cy="${y+3}" r="1.6" fill="#fff"/><circle cx="${x+2}" cy="${y-4}" r="1.3" fill="#fff"/>`).join('')}${[[62,62],[72,58],[68,72],[58,76]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="6" ry="5" fill="#6B8E23"/><ellipse cx="${x-2}" cy="${y-2}" rx="2" ry="1.5" fill="#A6C85A"/>`).join('')}${[[84,68,-10],[86,82,15],[76,88,-25]].map(([x,y,r])=>`<ellipse cx="${x}" cy="${y}" rx="10" ry="7" fill="#FFD25A" transform="rotate(${r} ${x} ${y})"/>`).join('')}`;
 ILL.f_ptitchef='<rect x="6" y="74" width="108" height="34" rx="10" fill="#E63B2E"/><rect x="6" y="74" width="108" height="6" rx="3" fill="#C92E22"/>'+T(62,-2,.5,ILL.jus)+T(-2,30,.64,ILL.hotdog)+T(64,52,.42,ILL.orange);
@@ -500,7 +514,12 @@ const ICO={
 ICO.glacons='<rect x="60" y="30" width="32" height="32" rx="6" fill="#DFF2FF" stroke="#9CCDF0" stroke-width="2" transform="rotate(-12 76 46)"/><rect x="40" y="66" width="32" height="32" rx="6" fill="#DFF2FF" stroke="#9CCDF0" stroke-width="2" transform="rotate(8 56 82)"/><rect x="24" y="36" width="30" height="30" rx="6" fill="#DFF2FF" stroke="#9CCDF0" stroke-width="2" transform="rotate(18 39 51)"/>';
 ICO.sansglacons=ICO.glacons+SLASH;
 ICO.beurreconf=T(-8,8,.72,ICO.beurre)+T(40,24,.68,ICO.confiture);
-ICO.donut_rose=ILL.donut; ICO.donut_choc=ILL.donut_choc;
+ICO.donut_rose=ILL.donut;
+ICO.roquefort=BOWL('#F2EBD8')+'<circle cx="46" cy="56" r="2.5" fill="#5E8C7A"/><circle cx="60" cy="54" r="2" fill="#5E8C7A"/><circle cx="72" cy="58" r="2.5" fill="#5E8C7A"/><circle cx="54" cy="60" r="1.8" fill="#5E8C7A"/>';
+ICO.forestiere=BOWL('#7A4A26')+'<path d="M42,57 q6,-8 12,0z" fill="#F2E3C6"/><rect x="46" y="56" width="4" height="4" fill="#F2E3C6"/><path d="M64,55 q6,-8 12,0z" fill="#F2E3C6"/><rect x="68" y="54" width="4" height="4" fill="#F2E3C6"/>';
+ICO.cafe_normal=CAFE;
+ICO.cafe_court=T(15,24,.75,CAFE);
+ICO.sanssucre=ICO.sucre+SLASH; ICO.donut_choc=ILL.donut_choc;
 
 /* animals (100x100) */
 const AN={
@@ -549,7 +568,7 @@ const ING={fromage:'Fromage',salade:'Salade',tomate:'Tomate',cornichons:'Cornich
 const ch=(id,label,icon,delta)=>({id,label,icon:icon||id,delta:delta||0});
 const SIDE={k:'side',type:'choice',label:'Frites ou pâtes ?',choices:[ch('frites','Frites'),ch('pates','Pâtes')]};
 const CUISSON={k:'cuisson',type:'choice',label:'La cuisson',def:'apoint',choices:[ch('bleu','Bleu','c_bleu'),ch('saignant','Saignant','c_saignant'),ch('apoint','À point','c_apoint'),ch('biencuit','Bien cuit','c_bien')]};
-const SAUCE={k:'sauce',type:'choice',label:'La sauce',choices:[ch('poivre','Poivre'),ch('bearnaise','Béarnaise'),ch('sanssauce','Sans sauce')]};
+const SAUCE={k:'sauce',type:'choice',label:'La sauce',choices:[ch('poivre','Poivre'),ch('bearnaise','Béarnaise'),ch('roquefort','Roquefort'),ch('forestiere','Forestière'),ch('sanssauce','Sans sauce')]};
 const REM=(...l)=>({k:'remove',type:'remove',label:'Enlever un ingrédient',choices:l.map(i=>ch(i,ING[i]))});
 const EXT=(...l)=>({k:'extras',type:'extras',label:'Suppléments',choices:l.map(i=>ch(i,ING[i],i,100))});
 
@@ -594,21 +613,29 @@ const ITEMS=[
  P('tmyrt','desserts','Tarte aux myrtilles',550),
  P('banane','fruits','Banane',150),P('orange','fruits','Orange',150),P('raisin','fruits','Raisin',150),P('pomme','fruits','Pomme',150),P('poire','fruits','Poire',150),P('abricot','fruits','Abricot',150),P('fraise','fruits','Fraises',150),P('ananas','fruits','Ananas',300),
  P('eau','boissons','Eau',200,[{k:'eau',type:'choice',label:'Plate ou pétillante ?',choices:[ch('plate','Plate','eau_plate'),ch('petillante','Pétillante','eau_pet')]}]),
+ P('coca','boissons','Coca',300),
+ P('fanta','boissons','Fanta',300),
+ P('oasis','boissons','Oasis',300),
+ P('sirop','boissons','Sirop à l’eau',200,[{k:'parfum',type:'choice',label:'Quel parfum ?',choices:[ch('grenadine','Grenadine','ill:sirop_g'),ch('menthe','Menthe','ill:sirop_m'),ch('fraise','Fraise','ill:sirop_f'),ch('citron','Citron','ill:sirop_c')]}],{ill:'sirop_g',illOf:s=>({menthe:'sirop_m',fraise:'sirop_f',citron:'sirop_c'})[s.parfum]||'sirop_g'}),
  P('jus','boissons','Jus d’orange',350),
  P('citronnade','boissons','Citronnade maison',350),
  P('smoothie','boissons','Smoothie fraise-mangue',450),
+ P('cafe','boissons','Café',200,[{k:'long',type:'choice',label:'Court ou normal ?',def:'normal',choices:[ch('court','Court','cafe_court'),ch('normal','Normal','cafe_normal')]},{k:'sucre',type:'choice',label:'Sucré ou pas ?',choices:[ch('sucre','Sucré'),ch('nosucre','Sans sucre','sanssucre')]}]),
  P('vrouge','vins','Vin rouge',500,[VFMT],{note:'Verre, pichet de 50 cl ou bouteille',illOf:s=>s.fmt==='pichet'?'prouge':s.fmt==='bouteille'?'brouge':'vrouge'}),
  P('vblanc','vins','Vin blanc',500,[VFMT],{note:'Verre, pichet de 50 cl ou bouteille',illOf:s=>s.fmt==='pichet'?'pblanc':s.fmt==='bouteille'?'bblanc':'vblanc'}),
  P('rose','vins','Vin rosé',500,[VFMT],{note:'Verre, pichet de 50 cl ou bouteille',illOf:s=>s.fmt==='pichet'?'prose':s.fmt==='bouteille'?'brose':'rose'}),
  P('pastis','apero','Pastis',350,[],{note:'Avec sa carafe d’eau fraîche'}),
  P('demi','apero','Demi de bière',450),
  P('kir','apero','Kir',500),
+ P('vodka','apero','Vodka',700),
+ P('tequila','apero','Tequila',700,[],{note:'Avec son sel et son citron vert'}),
  P('whisky','apero','Whisky',700,[{k:'glacons',type:'choice',label:'Avec des glaçons ?',choices:[ch('avec','Avec glaçons','glacons'),ch('sans','Sans glaçons','sansglacons')]}]),
  P('planche','apero','Planche apéro',600,[],{note:'Saucisson, olives et chips'})
 ];
 const ITEM={};ITEMS.forEach(i=>ITEM[i.id]=i);
 const itemCh=(id,delta)=>({id,label:ITEM[id].name,icon:'item:'+id,delta:delta||0,ref:id});
-const SOFTS=['eau','jus','citronnade','smoothie'];
+const SOFTS=['eau','coca','fanta','oasis','jus','citronnade','smoothie'];
+const SOFT_CH=()=>SOFTS.map(i=>itemCh(i)).concat([ch('sirg','Sirop grenadine','ill:sirop_g'),ch('sirm','Sirop menthe','ill:sirop_m')]);
 const PLATS=ITEMS.filter(i=>i.cat==='plats').map(i=>i.id);
 const CUIS_SET=['cheval','boucher','bavette','cote'];
 ITEMS.unshift(
@@ -616,13 +643,13 @@ ITEMS.unshift(
   {k:'plat',type:'choice',label:'Le plat',choices:['hotdog','saucisses','merguez'].map(i=>itemCh(i))},
   SIDE,
   {k:'fruit',type:'choice',label:'Le fruit',choices:['banane','orange','raisin','pomme','poire','abricot','fraise'].map(i=>itemCh(i))},
-  {k:'boisson',type:'choice',label:'La boisson',choices:SOFTS.map(i=>itemCh(i))}
+  {k:'boisson',type:'choice',label:'La boisson',choices:SOFT_CH()}
  ],{ill:'f_ptitchef',note:'Un plat, un fruit et une boisson'}),
  P('nygio','formules','Menu NyGio',1800,[
   SIDE,
   REM('fromage','salade','tomate','cornichons','oignons','sauce'),
   EXT('fromage','bacon','oeuf'),
-  {k:'boisson',type:'choice',label:'La boisson',choices:SOFTS.map(i=>itemCh(i))},
+  {k:'boisson',type:'choice',label:'La boisson',choices:SOFT_CH()},
   {k:'dessert',type:'choice',label:'Le dessert',choices:[itemCh('cookie'),itemCh('donut'),itemCh('gaufre'),ch('glacef','Glace fraise','ill:glace'),ch('glacev','Glace vanille','ill:glace_v'),itemCh('tcitron')]}
  ],{ill:'f_nygio',note:'Le hamburger, une boisson et un dessert'}),
  P('brasserie','formules','Formule Brasserie',600,[
@@ -630,7 +657,7 @@ ITEMS.unshift(
   SIDE,
   Object.assign({},CUISSON,{showIf:s=>CUIS_SET.includes(s.plat)}),
   {k:'dessert',type:'choice',label:'Le dessert',choices:['cookie','donut','crepe','gaufre','tcitron','tmyrt'].map(i=>itemCh(i)).concat([ch('glacef','Glace fraise','ill:glace'),ch('glacev','Glace vanille','ill:glace_v')])},
-  {k:'boisson',type:'choice',label:'La boisson',choices:SOFTS.map(i=>itemCh(i))}
+  {k:'boisson',type:'choice',label:'La boisson',choices:SOFT_CH()}
  ],{ill:'f_brasserie',from:true,note:'Le plat de ton choix, un dessert et une boisson pour 6 € de plus'})
 );
 ITEMS.slice(0,3).forEach(i=>ITEM[i.id]=i);
@@ -640,6 +667,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}
 let settings=Object.assign({voice:true,sound:true,idle:true,pin:'1234',prices:{},hidden:{}},LS.get('nygio_settings',{}));
 let orders=LS.get('nygio_orders',[]);if(!Array.isArray(orders))orders=[];
 let counter=LS.get('nygio_counter',0)||0;
+orders.forEach(o=>{if(o.paid===undefined)o.paid=true});
 const saveAll=()=>{LS.set('nygio_settings',settings);LS.set('nygio_orders',orders);LS.set('nygio_counter',counter)};
 
 /* ---------- utils ---------- */
@@ -656,6 +684,10 @@ const itemIll=(it,sel)=>it.illOf?it.illOf(sel||{}):it.ill;
 const ill=k=>W(SHD+(ILL[k]||ICO[k]||''));
 const iconSvg=k=>{if(k.startsWith('item:'))return ill(ITEM[k.slice(5)].ill);if(k.startsWith('ill:'))return ill(k.slice(4));if(ICO[k])return W(ICO[k]);return ill(k)};
 const tileFrom=it=>{if(!it.from)return priceOf(it);const s=it.sec[0];const ds=visChoices(s).map(dOf);return priceOf(it)+(ds.length?Math.min(...ds):0)};
+const openOrders=t=>orders.filter(o=>o.table===t&&!o.paid);
+const billTotal=t=>openOrders(t).reduce((a,o)=>a+o.total,0);
+const payTotal=()=>S.bill?billTotal(S.bill):cartTotal();
+const activeOrders=()=>orders.filter(o=>o.status!=='served');
 const cartTotal=()=>S.cart.reduce((a,l)=>a+l.unit*l.qty,0);
 const cartCount=()=>S.cart.reduce((a,l)=>a+l.qty,0);
 const tLabel=t=>t==='E'?'À emporter':'Table '+t;
@@ -678,14 +710,14 @@ function say(t){if(!settings.voice||!('speechSynthesis' in window))return;try{sp
 if('speechSynthesis' in window){try{speechSynthesis.getVoices()}catch(e){}}
 
 /* ---------- state ---------- */
-const S={tab:'order',screen:'welcome',mode:null,table:null,cat:'formules',cart:[],prod:null,sel:{},qty:1,editUid:null,prodFrom:'menu',pay:null,modal:null,last:null,upsellOff:false,toast:null,bump:false};
+const S={tab:'order',screen:'welcome',mode:null,table:null,cat:'formules',cart:[],prod:null,sel:{},qty:1,editUid:null,prodFrom:'menu',pay:null,modal:null,last:null,upsellOff:false,toast:null,bump:false,bill:null};
 let lastAct=Date.now(),toastT=null,ticketT=null;
 const $app=document.getElementById('app');
 
 function toast(m){S.toast=m;render();clearTimeout(toastT);toastT=setTimeout(()=>{S.toast=null;render()},1700)}
 function go(scr){S.screen=scr;render();const sc=$app.querySelector('.scroll,.gridwrap,.tk-wrap');if(sc)sc.scrollTop=0}
-function resetOrder(){clearTimeout(ticketT);Object.assign(S,{screen:'welcome',mode:null,table:null,cat:'formules',cart:[],prod:null,sel:{},qty:1,editUid:null,prodFrom:'menu',pay:null,upsellOff:false,last:null});if(S.modal&&S.modal.type==='idle')S.modal=null;render()}
-function backTarget(){const m={mode:'welcome',table:'mode',menu:S.mode==='place'?'table':'mode',product:S.prodFrom,cart:'menu',paychoose:'cart',card:'paychoose',cash:'paychoose'};
+function resetOrder(){clearTimeout(ticketT);Object.assign(S,{screen:'welcome',mode:null,table:null,cat:'formules',cart:[],prod:null,sel:{},qty:1,editUid:null,prodFrom:'menu',pay:null,upsellOff:false,last:null,bill:null});if(S.modal&&S.modal.type==='idle')S.modal=null;render()}
+function backTarget(){const m={mode:'welcome',table:'mode',menu:S.mode==='place'?'table':'mode',product:S.prodFrom,cart:'menu',paychoose:S.bill?'bill':'cart',card:'paychoose',cash:'paychoose',billtable:'mode',bill:'billtable'};
  if(S.screen==='card'&&S.pay&&!['insert','pin'].includes(S.pay.step))return null;return m[S.screen]||null}
 function confirmBox(title,text,okLabel,fn,danger){S.modal={type:'confirm',title,text,okLabel,onOk:fn,danger,prev:S.modal};render()}
 
@@ -693,18 +725,24 @@ function confirmBox(title,text,okLabel,fn,danger){S.modal={type:'confirm',title,
 function header(){
  const ord=S.tab==='order',wel=ord&&S.screen==='welcome';const bt=ord?backTarget():null;
  const left=bt?`<button class="icon-btn" data-act="back" aria-label="Retour">${IC.back}</button>`:'';
- let ctx='';if(ord&&!['welcome','mode','table'].includes(S.screen)){const t=S.mode==='place'?String(S.table):'E';if(S.mode)ctx=`<div class="ctx" style="--tc:${TABLES[t].c}"><span class="an">${animal(t)}</span><span>${tLabel(t)}</span></div>`}
+ let ctx='';if(ord&&!['welcome','mode','table','billtable'].includes(S.screen)){const t=S.bill?S.bill:S.mode==='place'?String(S.table):'E';if(S.mode)ctx=`<div class="ctx" style="--tc:${TABLES[t].c}"><span class="an">${animal(t)}</span><span>${tLabel(t)}</span></div>`}
  const cancel=ord&&['menu','product','cart','paychoose','cash'].includes(S.screen)?`<button class="cancel-btn" data-act="cancelOrder">${IC.x}<span>Annuler</span></button>`:'';
- const n=orders.length;
+ const n=activeOrders().length;
  return `<header class="hdr ${wel?'red':''}">${left}<div class="brand"><span class="lg">${LOGO}</span><span class="bn">Chez NyGio</span></div>${ctx}<div class="spacer"></div>${cancel}<div class="tabs" role="tablist"><button class="tab ${ord?'on':''}" data-act="tab" data-v="order">${IC.cart}<span>Commande</span></button><button class="tab ${!ord?'on':''}" data-act="tab" data-v="kitchen">${IC.chef}<span>Cuisine</span>${n?`<span class="badge">${n}</span>`:''}</button></div><button class="icon-btn gear" data-act="gear" aria-label="Espace parent">${IC.gear}</button></header>`}
 
 function vWelcome(){
  const fl=[['burger',5,12,-10,0],['glace',80,9,12,.8],['jus',6,66,8,1.6],['donut',82,62,-14,.4],['fraise',22,86,14,2.2],['croissant',68,85,-6,1.2]];
  return `<section class="welcome" data-act="start">${fl.map(([k,x,y,r,d])=>`<div class="float" style="left:${x}%;top:${y}%;--r:${r}deg;--d:${d}s">${ill(k)}</div>`).join('')}<div class="w-logo">${LOGO}</div><h1 class="w-title">Chez NyGio</h1><p class="w-sub">Le restaurant de la maison</p><div class="w-cta">${IC.hand}<span>Touche pour commander</span></div></section>`}
 
-function vMode(){return `<div class="scroll pad"><h2 class="q">Tu manges où ?</h2><div class="big2"><button class="bigcard" data-act="mode" data-v="place"><span class="ill">${ill('place')}</span>Sur place</button><button class="bigcard" data-act="mode" data-v="emporter"><span class="ill">${ill('bag')}</span>À emporter</button></div></div>`}
+function vMode(){return `<div class="scroll pad"><h2 class="q">Tu manges où ?</h2><div class="big2"><button class="bigcard" data-act="mode" data-v="place"><span class="ill">${ill('place')}</span>Sur place</button><button class="bigcard" data-act="mode" data-v="emporter"><span class="ill">${ill('bag')}</span>À emporter</button><button class="bigcard" data-act="mode" data-v="addition"><span class="ill">${ill('addition')}</span>Payer l’addition</button></div></div>`}
 
-function vTable(){return `<div class="scroll pad"><h2 class="q">À quelle table ?</h2><div class="tables">${['1','2','3','4','5'].map(t=>`<button class="tbl" style="--tc:${TABLES[t].c}" data-act="table" data-v="${t}"><span class="an">${animal(t)}</span><span class="nb">${t}</span><span class="nm">Table ${t}</span></button>`).join('')}</div></div>`}
+function vTable(){return `<div class="scroll pad"><h2 class="q">À quelle table ?</h2><div class="tables">${['1','2','3','4','5'].map(t=>`<button class="tbl" style="--tc:${TABLES[t].c}" data-act="table" data-v="${t}"><span class="an">${animal(t)}</span><span class="nb">${t}</span>${billTotal(t)?`<span class="due">Addition ${fmt(billTotal(t))}</span>`:`<span class="nm">Table ${t}</span>`}</button>`).join('')}</div></div>`}
+function vBillTable(){return `<div class="scroll pad"><h2 class="q">Quelle table paie ?</h2><div class="tables">${['1','2','3','4','5'].map(t=>{const b=billTotal(t);return `<button class="tbl ${b?'':'dim'}" style="--tc:${TABLES[t].c};${b?'':'opacity:.4'}" data-act="billtable" data-v="${t}"><span class="an">${animal(t)}</span><span class="nb">${t}</span>${b?`<span class="due">${fmt(b)}</span>`:'<span class="nm">Rien à payer</span>'}</button>`}).join('')}</div></div>`}
+function vBill(){const t=S.bill;const os=openOrders(t);const lines=[].concat(...os.map(o=>o.lines));
+ const rows=lines.map(l=>`<div class="line"><div class="l-ill">${ill(l.ill)}</div><div class="l-main"><div class="l-name">${l.qty>1?l.qty+'× ':''}${esc(l.name)}</div>${chipsHtml(l.det)}</div><div class="l-price">${fmt(l.unit*l.qty)}</div></div>`).join('');
+ const waiting=os.filter(o=>o.status!=='served').length;
+ return `<div class="scroll pad" data-keep="bill"><h2 class="q">L’addition</h2>${waiting?`<p class="hint" style="text-align:center;margin:-10px 0 16px">${waiting>1?waiting+' commandes ne sont pas encore servies':'1 commande n’est pas encore servie'}</p>`:''}<div class="lines">${rows||'<div class="empty-cart">Rien à payer pour cette table.</div>'}</div></div>
+ <div class="footbar"><div class="tot"><span>Total à payer</span><b>${fmt(billTotal(t))}</b></div><button class="btn primary" data-act="topay" ${lines.length?'':'disabled'}>Payer</button></div>`}
 
 function vMenu(){
  const cat=CAT[S.cat];const items=ITEMS.filter(i=>i.cat===S.cat&&visible(i));
@@ -733,17 +771,17 @@ function vCart(){
  const ups=['glace','donut','cookie','crepe'].filter(i=>visible(ITEM[i]));
  const upsell=(!S.upsellOff&&S.cart.length&&!hasDessert&&ups.length)?`<div class="upsell"><div class="up-h"><b>Un dessert avec ça ?</b><button class="linkbtn" data-act="upsellOff">Non merci</button></div><div class="up-row">${ups.map(i=>`<button class="up" data-act="prod" data-v="${i}" data-from="cart"><span class="ill">${ill(ITEM[i].ill)}</span><span>${ITEM[i].name}</span><span class="price sm">${fmt(priceOf(ITEM[i]))}</span></button>`).join('')}</div></div>`:'';
  return `<div class="scroll pad" data-keep="cart"><h2 class="q">Ma commande</h2>${S.cart.length?`<div class="lines">${lines}</div>`:`<div class="empty-cart"><div class="ill">${ill('burger')}</div>Ta commande est vide. Ajoute quelque chose à manger !</div>`}${upsell}</div>
- <div class="footbar"><div class="tot"><span>Total</span><b>${fmt(cartTotal())}</b></div><button class="btn ghost" data-act="back">${IC.plus}Ajouter</button><button class="btn primary" data-act="topay" ${S.cart.length?'':'disabled'}>Payer</button></div>`}
+ <div class="footbar"><div class="tot"><span>Total</span><b>${fmt(cartTotal())}</b></div><button class="btn ghost" data-act="back">${IC.plus}Ajouter</button>${S.mode==='place'?`<button class="btn ok" data-act="send" ${S.cart.length?'':'disabled'}>${IC.chef}Envoyer en cuisine</button>`:`<button class="btn primary" data-act="topay" ${S.cart.length?'':'disabled'}>Payer</button>`}</div>`}
 
-function vPayChoose(){return `<div class="scroll pad center-col"><p class="bigtotal-l">À payer</p><div class="bigtotal">${fmt(cartTotal())}</div><h2 class="q" style="margin-top:20px">Comment tu paies ?</h2><div class="paygrid"><button class="bigcard" data-act="paycard"><span style="padding:30px 0 22px"><span class="cardart" style="display:block"></span></span>Carte</button><button class="bigcard" data-act="paycash"><span class="cashart" style="padding:30px 0 22px"><span class="b">${MONEY(1000)}</span><span class="c">${MONEY(200)}</span></span>Espèces</button></div></div>`}
+function vPayChoose(){return `<div class="scroll pad center-col"><p class="bigtotal-l">À payer</p><div class="bigtotal">${fmt(payTotal())}</div><h2 class="q" style="margin-top:20px">Comment tu paies ?</h2><div class="paygrid"><button class="bigcard" data-act="paycard"><span style="padding:30px 0 22px"><span class="cardart" style="display:block"></span></span>Carte</button><button class="bigcard" data-act="paycash"><span class="cashart" style="padding:30px 0 22px"><span class="b">${MONEY(1000)}</span><span class="c">${MONEY(200)}</span></span>Espèces</button></div></div>`}
 
-function vCard(){const p=S.pay,t=cartTotal();
+function vCard(){const p=S.pay,t=payTotal();
  const scr={insert:`<small>Montant</small><b>${fmt(t)}</b><span>Pose ta carte</span>`,tapping:`<b>${fmt(t)}</b><span>Lecture…</span>`,pin:`<small>Code secret</small><b class="dots">${[0,1,2,3].map(i=>i<p.pin.length?'●':'○').join('')}</b>`,proc:'<span>Paiement en cours…</span>',ok:`<span class="okt">${IC.check}Accepté</span>`}[p.step];
  const title={insert:'Pose ta carte sur le terminal',tapping:'Pose ta carte sur le terminal',pin:'Tape ton code secret',proc:'Patiente un peu…',ok:'Paiement accepté !'}[p.step];
  return `<div class="scroll pad center-col"><h2 class="q">${title}</h2><div class="tpe-zone"><div class="tpe"><div class="tpe-scr ${p.step}">${scr}</div><div class="tpe-keys">${'<i></i>'.repeat(12)}</div></div><button class="cb ${p.step==='insert'?'pulse':'in'}" data-act="cardtap" aria-label="Carte bancaire"><span class="wv">${IC.wave}</span><span class="chipc"></span><span class="cbn">NyGio</span><span class="cbnum">•••• 2026</span></button></div>
  ${p.step==='pin'?`<div class="keypad">${['1','2','3','4','5','6','7','8','9','','0','del'].map(k=>k===''?'<span></span>':`<button class="key" data-act="cpk" data-v="${k}" aria-label="${k==='del'?'Effacer':k}">${k==='del'?IC.backspace:k}</button>`).join('')}</div>`:''}</div>`}
 
-function vCash(){const p=S.pay,t=cartTotal(),rest=t-p.given;
+function vCash(){const p=S.pay,t=payTotal(),rest=t-p.given;
  return `<div class="scroll pad" data-keep="cash"><div class="cash-top"><div class="ct"><span>À payer</span><b>${fmt(t)}</b></div><div class="ct"><span>Tu as donné</span><b>${fmt(p.given)}</b></div><div class="ct ${rest>0?'miss':'good'}"><span>${rest>0?'Il manque':'À rendre'}</span><b>${fmt(Math.abs(rest))}</b></div></div>
  <div class="tray">${p.pieces.length?p.pieces.map(v=>`<span class="mm ${v>=500?'bill':'coin'} pop">${MONEY(v)}</span>`).join(''):'<span class="empty">Touche les pièces et les billets que tu donnes</span>'}</div>
  <h3 class="sec-label">Les pièces</h3><div class="money">${[50,100,200].map(v=>`<button class="mbtn coin" data-act="money" data-v="${v}" aria-label="${say$(v)}">${MONEY(v)}</button>`).join('')}</div>
@@ -756,14 +794,17 @@ function vChange(){const c=S.pay.change;
 
 function vTicket(){const o=S.last;if(!o)return '';const d=new Date(o.t);
  const lines=o.lines.map(l=>`<div class="tk-l"><span>${l.qty}× ${esc(l.name)}</span><span>${fmt(l.unit*l.qty)}</span></div>${l.det.length?`<div class="tk-d">${l.det.map(x=>esc(x.t)).join(' · ')}</div>`:''}`).join('');
- return `<div class="tk-wrap"><div class="slot"></div><div class="tk-clip"><div class="ticket"><div class="tk-c"><div class="tk-logo">${LOGO}</div><div class="tk-name">Chez NyGio</div><div>${d.toLocaleDateString('fr-FR')} ${d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div><hr class="tk-hr"><div class="tk-num">Commande n°<b>${o.num}</b></div><div class="tk-where" style="--tc:${TABLES[o.table].c}"><span class="an">${animal(o.table)}</span>${tLabel(o.table)}</div></div><hr class="tk-hr">${lines}<hr class="tk-hr"><div class="tk-tot"><span>TOTAL</span><span>${fmt(o.total)}</span></div><div>Payé ${o.pay==='carte'?'par carte':'en espèces'}</div>${o.pay==='especes'?`<div>Donné : ${fmt(o.given)} · Rendu : ${fmt(o.change)}</div>`:''}<hr class="tk-hr"><div class="tk-c tk-thanks">Merci et bon appétit !</div></div></div><button class="btn primary" data-act="newOrder">Nouvelle commande</button></div>`}
+ const title=o.kind==='bill'?'<div class="tk-num">Addition<b style="font-size:40px">Table '+o.table+'</b></div>':`<div class="tk-num">${o.kind==='sent'?'Bon de commande':'Commande'} n°<b>${o.num}</b></div>`;
+ const payLine=o.kind==='sent'?'<div class="tk-c">À payer à la fin du repas</div>':`<div>Payé ${o.pay==='carte'?'par carte':'en espèces'}</div>${o.pay==='especes'?`<div>Donné : ${fmt(o.given)} · Rendu : ${fmt(o.change)}</div>`:''}`;
+ const thanks=o.kind==='sent'?'C’est parti en cuisine !':o.kind==='bill'?'Merci et à bientôt !':'Merci et bon appétit !';
+ return `<div class="tk-wrap"><div class="slot"></div><div class="tk-clip"><div class="ticket"><div class="tk-c"><div class="tk-logo">${LOGO}</div><div class="tk-name">Chez NyGio</div><div>${d.toLocaleDateString('fr-FR')} ${d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div><hr class="tk-hr">${title}<div class="tk-where" style="--tc:${TABLES[o.table].c}"><span class="an">${animal(o.table)}</span>${tLabel(o.table)}</div></div><hr class="tk-hr">${lines}<hr class="tk-hr"><div class="tk-tot"><span>TOTAL</span><span>${fmt(o.total)}</span></div>${payLine}<hr class="tk-hr"><div class="tk-c tk-thanks">${thanks}</div></div></div><button class="btn primary" data-act="newOrder">${o.kind==='sent'?'Terminé':'Nouvelle commande'}</button></div>`}
 
 function ago(t){const m=Math.floor((Date.now()-t)/60000);return m<1?'à l’instant':m<60?`il y a ${m} min`:`il y a ${Math.floor(m/60)} h`}
 function vKitchen(){
  const prep=orders.filter(o=>o.status==='prep').length,ready=orders.filter(o=>o.status==='ready').length;
- const groups=['1','2','3','4','5','E'].map(t=>{const os=orders.filter(o=>o.table===t).sort((a,b)=>a.t-b.t);
-  const head=`<header><span class="k-an">${animal(t)}</span><div><div class="k-tname">${tLabel(t)}</div><div class="k-tsub">${os.length?(os.length>1?os.length+' commandes':'1 commande'):(t==='E'?'Aucune commande':'Table libre')}</div></div><div class="spacer"></div>${os.length&&t!=='E'?`<button class="mini" data-act="free" data-v="${t}">Libérer</button>`:''}</header>`;
-  if(!os.length)return `<section class="k-table empty" style="--tc:${TABLES[t].c}">${head}</section>`;
+ const groups=['1','2','3','4','5','E'].map(t=>{const os=orders.filter(o=>o.table===t&&o.status!=='served').sort((a,b)=>a.t-b.t);const due=billTotal(t);const busy=os.length||due;
+  const head=`<header><span class="k-an">${animal(t)}</span><div><div class="k-tname">${tLabel(t)}</div><div class="k-tsub">${os.length?(os.length>1?os.length+' en cours':'1 en cours'):(t==='E'?'Aucune commande':due?'Tout est servi':'Table libre')}${due&&t!=='E'?` · addition ${fmt(due)}`:''}</div></div><div class="spacer"></div>${busy&&t!=='E'?`<button class="mini" data-act="free" data-v="${t}">Libérer</button>`:''}</header>`;
+  if(!os.length)return `<section class="k-table ${due?'':'empty'}" style="--tc:${TABLES[t].c}">${head}</section>`;
   return `<section class="k-table" style="--tc:${TABLES[t].c}">${head}${os.map(o=>`<article class="k-order ${o.status}"><div class="k-otop"><span class="k-num">N° ${o.num}</span><span class="k-time">${new Date(o.t).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})} · ${ago(o.t)}</span><span class="k-st ${o.status}">${o.status==='ready'?'Prête':'En préparation'}</span></div>
   <ul class="k-lines">${o.lines.map((l,i)=>`<li class="${l.done?'done':''}" data-act="kline" data-o="${o.id}" data-i="${i}"><span class="k-ck">${l.done?IC.check:''}</span><span class="k-ill">${ill(l.ill)}</span><div class="k-body"><div class="k-ln"><b>${l.qty}×</b>${esc(l.name)}</div>${chipsHtml(l.det)}${l.th&&l.th.length?`<div class="k-th">${l.th.map(k=>`<span>${ill(k)}</span>`).join('')}</div>`:''}</div></li>`).join('')}</ul>
   <div class="k-act">${o.status==='prep'?`<button class="btn ok sm" data-act="ready" data-v="${o.id}">${IC.bell}C’est prêt</button>`:`<button class="btn ok sm" data-act="served" data-v="${o.id}">${IC.check}Servie</button><button class="mini" data-act="recall" data-v="${o.id}">${IC.speaker}Rappeler</button>`}<div class="spacer"></div><button class="mini danger" data-act="kcancel" data-v="${o.id}">${IC.x}Annuler</button></div></article>`).join('')}</section>`}).join('');
@@ -783,7 +824,7 @@ function vModal(){const m=S.modal;if(!m)return '';
   <h4>Remise à zéro</h4><div class="resets"><button class="btn ghost sm" data-act="resetPrices">Remettre les prix d’origine</button><button class="btn ghost sm" data-act="clearOrders">Effacer toutes les commandes en cuisine</button><button class="btn ghost sm" data-act="resetNum">Recommencer les numéros à 1</button></div></div></div></div>`}
  return ''}
 
-function vScreen(){switch(S.screen){case 'welcome':return vWelcome();case 'mode':return vMode();case 'table':return vTable();case 'menu':return vMenu();case 'product':return vProduct();case 'cart':return vCart();case 'paychoose':return vPayChoose();case 'card':return vCard();case 'cash':return vCash();case 'change':return vChange();case 'ticket':return vTicket()}return ''}
+function vScreen(){switch(S.screen){case 'welcome':return vWelcome();case 'mode':return vMode();case 'table':return vTable();case 'menu':return vMenu();case 'product':return vProduct();case 'cart':return vCart();case 'paychoose':return vPayChoose();case 'card':return vCard();case 'cash':return vCash();case 'change':return vChange();case 'ticket':return vTicket();case 'billtable':return vBillTable();case 'bill':return vBill()}return ''}
 
 function render(){
  const keep={};$app.querySelectorAll('[data-keep]').forEach(e=>keep[e.dataset.keep]=e.scrollTop);
@@ -802,16 +843,26 @@ function addToCart(){const it=ITEM[S.prod];const unit=unitPrice(it,S.sel);const 
  S.cart.push(line);say(it.name+', c’est ajouté !');S.bump=true;
  if(S.prodFrom==='cart'){go('cart')}else{go('menu')}
  toast('Ajouté à ta commande');setTimeout(()=>{S.bump=false},500)}
-function finalize(){if(S.screen==='ticket')return;counter++;
- const o={id:uid(),num:counter,table:S.mode==='place'?String(S.table):'E',lines:S.cart.map(l=>Object.assign({},l,{done:false})),total:cartTotal(),pay:S.pay.method,given:S.pay.given||0,change:S.pay.change||0,status:'prep',t:Date.now()};
- orders.push(o);saveAll();S.last=o;sfx('print');go('ticket');say('Merci ! Ta commande numéro '+o.num+' part en cuisine.');
+function sendKitchen(){if(!S.cart.length||S.screen==='ticket')return;counter++;
+ const o={id:uid(),num:counter,table:String(S.table),lines:S.cart.map(l=>Object.assign({},l,{done:false})),total:cartTotal(),pay:null,paid:false,status:'prep',t:Date.now()};
+ orders.push(o);saveAll();S.last=Object.assign({kind:'sent'},o);sfx('print');go('ticket');say('C’est parti en cuisine ! Tu paieras à la fin du repas.');
+ clearTimeout(ticketT);ticketT=setTimeout(()=>{if(S.screen==='ticket')resetOrder()},30000)}
+function finalize(){if(S.screen==='ticket')return;
+ if(S.bill){const t=S.bill;const os=openOrders(t);const lines=[].concat(...os.map(o=>o.lines));const total=billTotal(t);
+  os.forEach(o=>{o.paid=true;o.pay=S.pay.method});orders=orders.filter(o=>!(o.paid&&o.status==='served'));saveAll();
+  S.last={kind:'bill',table:t,lines,total,pay:S.pay.method,given:S.pay.given||0,change:S.pay.change||0,t:Date.now()};
+  sfx('print');go('ticket');say('Merci ! L’addition de la table '+t+' est réglée. À bientôt !');
+  clearTimeout(ticketT);ticketT=setTimeout(()=>{if(S.screen==='ticket')resetOrder()},30000);return}
+ counter++;
+ const o={id:uid(),num:counter,table:S.mode==='place'?String(S.table):'E',lines:S.cart.map(l=>Object.assign({},l,{done:false})),total:cartTotal(),pay:S.pay.method,paid:true,given:S.pay.given||0,change:S.pay.change||0,status:'prep',t:Date.now()};
+ orders.push(o);saveAll();S.last=Object.assign({kind:'order'},o);sfx('print');go('ticket');say('Merci ! Ta commande numéro '+o.num+' part en cuisine.');
  clearTimeout(ticketT);ticketT=setTimeout(()=>{if(S.screen==='ticket')resetOrder()},30000)}
 const findO=id=>orders.find(o=>o.id===id);
 function announce(o){sfx('ding');setTimeout(()=>say(`Commande numéro ${o.num}, ${o.table==='E'?'à emporter':'table '+o.table}, c’est prêt !`),900)}
 
 const A={
  start(){sfx('tap');go('mode');say('Bienvenue chez NyGio ! Tu manges sur place ou à emporter ?')},
- mode(d){S.mode=d.v;sfx('tap');if(d.v==='place'){go('table');say('Sur place. À quelle table ?')}else{S.table=null;go('menu');say('À emporter. Choisis ce que tu veux !')}},
+ mode(d){S.mode=d.v;sfx('tap');if(d.v==='addition'){go('billtable');say('Quelle table veut payer l’addition ?');return}if(d.v==='place'){go('table');say('Sur place. À quelle table ?')}else{S.table=null;go('menu');say('À emporter. Choisis ce que tu veux !')}},
  table(d){S.table=d.v;sfx('tap');say('Table '+d.v+', '+TABLES[d.v].n);go('menu')},
  cat(d){S.cat=d.v;sfx('tap');say(CAT[d.v].name);render()},
  prod(d){openProduct(d.v,d.from)},
@@ -822,6 +873,8 @@ const A={
   sfx('tap');render()},
  qty(d){S.qty=Math.max(1,Math.min(9,S.qty+Number(d.v)));sfx('tap');say(String(S.qty));render()},
  add(){addToCart()},
+ send(){sfx('tap');sendKitchen()},
+ billtable(d){const b=billTotal(d.v);if(!b){sfx('err');say('La table '+d.v+' n’a rien à payer');return}S.bill=d.v;sfx('tap');go('bill');say('L’addition de la table '+d.v+' : '+say$(b))},
  back(){const t=backTarget();if(!t)return;sfx('tap');if(S.screen==='product')S.editUid=null;if(t==='welcome'){resetOrder();return}go(t)},
  tab(d){if(S.tab===d.v)return;S.tab=d.v;sfx('tap');render()},
  cart(){sfx('tap');go('cart');say('Ta commande. Total : '+say$(cartTotal()))},
@@ -829,7 +882,7 @@ const A={
  ldel(d){const l=S.cart.find(x=>x.uid===d.u);S.cart=S.cart.filter(x=>x.uid!==d.u);sfx('tap');if(l)say(l.name+' enlevé');render()},
  ledit(d){const l=S.cart.find(x=>x.uid===d.u);if(l)openProduct(l.id,'cart',l.uid)},
  upsellOff(){S.upsellOff=true;sfx('tap');render()},
- topay(){if(!S.cart.length)return;sfx('tap');go('paychoose');say('Ça fait '+say$(cartTotal())+'. Tu paies par carte ou en espèces ?')},
+ topay(){if(!payTotal())return;sfx('tap');go('paychoose');say('Ça fait '+say$(payTotal())+'. Tu paies par carte ou en espèces ?')},
  paycard(){S.pay={method:'carte',step:'insert',pin:''};sfx('tap');go('card');say('Pose ta carte sur le terminal')},
  paycash(){S.pay={method:'especes',given:0,pieces:[]};sfx('tap');go('cash');say('Donne tes pièces et tes billets')},
  cardtap(){const p=S.pay;if(!p||p.step!=='insert')return;p.step='tapping';sfx('bip');render();
@@ -840,17 +893,17 @@ const A={
     setTimeout(()=>{if(S.pay===p&&S.screen==='card')finalize()},1500)},1400)},350)}},
  money(d){const v=Number(d.v);S.pay.given+=v;S.pay.pieces.push(v);sfx('coin');say(say$(v));render()},
  mclear(){S.pay.given=0;S.pay.pieces=[];sfx('tap');render()},
- cashok(){const t=cartTotal();if(S.pay.given<t){sfx('err');say('Il manque '+say$(t-S.pay.given));return}
+ cashok(){const t=payTotal();if(S.pay.given<t){sfx('err');say('Il manque '+say$(t-S.pay.given));return}
   S.pay.change=S.pay.given-t;sfx('ok');go('change');say(S.pay.change?'Je te rends '+say$(S.pay.change):'Compte juste, merci !')},
  finish(){finalize()},
  newOrder(){sfx('tap');resetOrder()},
- cancelOrder(){confirmBox('Annuler la commande ?','Tout ce que tu as choisi sera effacé.','Oui, annuler',()=>{resetOrder();say('Commande annulée')},true)},
+ cancelOrder(){if(S.bill){confirmBox('Arrêter le paiement ?','L’addition reste ouverte, tu pourras payer plus tard.','Oui, arrêter',()=>{resetOrder()});return}confirmBox('Annuler la commande ?','Tout ce que tu as choisi sera effacé.','Oui, annuler',()=>{resetOrder();say('Commande annulée')},true)},
  kline(d){const o=findO(d.o);if(!o)return;const l=o.lines[Number(d.i)];l.done=!l.done;saveAll();sfx(l.done?'key':'tap');render()},
  ready(d){const o=findO(d.v);if(!o)return;o.status='ready';o.lines.forEach(l=>l.done=true);saveAll();render();announce(o)},
  recall(d){const o=findO(d.v);if(o)announce(o)},
- served(d){orders=orders.filter(o=>o.id!==d.v);saveAll();sfx('add');say('Bon appétit !');render()},
+ served(d){const o=findO(d.v);if(!o)return;if(o.paid)orders=orders.filter(x=>x.id!==d.v);else o.status='served';saveAll();sfx('add');say('Bon appétit !');render()},
  kcancel(d){const o=findO(d.v);if(!o)return;confirmBox('Annuler la commande n° '+o.num+' ?','Elle sera retirée de la cuisine.','Oui, annuler',()=>{orders=orders.filter(x=>x.id!==d.v);saveAll()},true)},
- free(d){confirmBox('Libérer la '+tLabel(d.v).toLowerCase()+' ?','Toutes les commandes de cette table seront retirées.','Oui, libérer',()=>{orders=orders.filter(o=>o.table!==d.v);saveAll()},true)},
+ free(d){confirmBox('Libérer la '+tLabel(d.v).toLowerCase()+' ?','Les commandes et l’addition de cette table seront effacées.','Oui, libérer',()=>{orders=orders.filter(o=>o.table!==d.v);saveAll()},true)},
  gear(){sfx('tap');S.modal={type:'pin',v:''};render()},
  pk(d){const m=S.modal;m.err=false;if(d.v==='del')m.v=m.v.slice(0,-1);else if(m.v.length<4){m.v+=d.v;sfx('key')}
   if(m.v.length===4){if(m.v===settings.pin){S.modal={type:'parent'};sfx('ok')}else{m.v='';m.err=true;sfx('err')}}render()},
